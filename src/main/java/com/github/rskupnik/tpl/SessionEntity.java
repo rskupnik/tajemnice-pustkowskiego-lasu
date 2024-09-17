@@ -10,24 +10,14 @@ import jakarta.persistence.Table;
 public class SessionEntity {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
 
-    private String code;
-
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
 }

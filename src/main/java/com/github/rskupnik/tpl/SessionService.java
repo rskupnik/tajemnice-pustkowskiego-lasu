@@ -1,10 +1,17 @@
 package com.github.rskupnik.tpl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class SessionService {
+
+    private final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
     private final SessionRepository sessionRepository;
 
@@ -13,14 +20,15 @@ public class SessionService {
         this.sessionRepository = sessionRepository;
     }
 
-    public void test() {
-        System.out.println("Testing");
+    public SessionEntity generateSession() {
         var entity = new SessionEntity();
-        entity.setCode("teStCodE");
+        entity.setId(UUID.randomUUID().toString().toUpperCase().substring(0, 5));
         sessionRepository.save(entity);
-        System.out.println("Added test entity");
+        logger.info("Generated session id {}", entity.getId());
+        return entity;
+    }
 
-        var entity2 = sessionRepository.findById(entity.getId());
-        System.out.println("Found entity with code: " + entity2.get().getCode() + " and id " + entity2.get().getId());
+    public Optional<SessionEntity> getSession(String id) {
+        return sessionRepository.findById(id);
     }
 }
