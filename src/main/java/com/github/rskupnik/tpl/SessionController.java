@@ -5,17 +5,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TplController {
+public class SessionController {
 
-    private final TplService tplService;
+    private final SessionService sessionService;
 
     @Autowired
-    public TplController(TplService tplService) {
-        this.tplService = tplService;
+    public SessionController(SessionService sessionService) {
+        this.sessionService = sessionService;
     }
 
     @PostMapping("test")
     public void test() {
-        tplService.test();
+        sessionService.test();
     }
 }
