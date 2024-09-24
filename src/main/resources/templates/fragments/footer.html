@@ -12,14 +12,15 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
 </head>
 <body>
-    <nav th:replace="~{fragments/navbar :: navbar}" />
 
-    <div class="container">
-        <h1>CONTENT</h1>
-    </div>
+<div class="flex flex-row fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 justify-center" th:fragment="footer">
+    <form action="">
+        <label for="test">Kod poszlaki:</label>
+        <input class="text-black w-16 mr-12" type="text" id="test" name="test">
+        <input class="bg-red-500 p-2 rounded-md" type="submit" value="Odblokuj">
+    </form>
+</div>
 
-    <div th:replace="~{fragments/footer :: footer}"/>
-
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
 </body>
 </html>
