@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
 </head>
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}" />
+<nav th:replace="~{fragments/navbar :: navbar(sessionId=${userSession != null ? userSession.id() : 'XXXXX'})}" />
 
 <div class="container">
     <h1>MAPA</h1>
