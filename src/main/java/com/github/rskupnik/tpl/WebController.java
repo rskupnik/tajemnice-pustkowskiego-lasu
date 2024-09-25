@@ -3,6 +3,8 @@ package com.github.rskupnik.tpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class WebController {
+
+    private final Logger logger = LoggerFactory.getLogger(WebController.class);
 
     private final SessionService sessionService;
 
@@ -22,24 +26,18 @@ public class WebController {
     public String map(HttpServletRequest request, Model model, HttpServletResponse response) {
         var cookies = request.getCookies();
         if (cookies == null || cookies.length == 0 || !sessionIdCookieExists(cookies)) {
-            // TODO: Direct to begin page and handle logic there
-            //return "pages/begin";
-
-            // TODO: BELOW IS TEMPORARY FOR TESTING
-            System.out.println("GENERATING SESSION");
-            var session = sessionService.generateSession();
-            System.out.println("SESSION GENERATED");
-            Cookie sessionIdCookie = new Cookie("sessionId", session.getId());
-            sessionIdCookie.setPath("/");
-            response.addCookie(sessionIdCookie);
-
-            return "pages/map";
+            setNewSessionCookie(response);
+            return "pages/begin";
         }
 
         var sessionIdCookie = retrieveCookie("sessionId", cookies);
-        System.out.println("SESSION ID COOKIE VALUE " + sessionIdCookie.getValue());
-        // TODO: Need a persistent DB to test this properly (cookie not present anymore after reload)
-        var session = sessionService.getSession(sessionIdCookie.getValue()).orElseThrow();  // TODO: What if session not found?
+        var session = sessionService.getSession(sessionIdCookie.getValue());
+        if (session.isEmpty()) {
+            // Invalid session, generate a new one?
+            logger.warn("Session not found: {}", sessionIdCookie.getValue());
+            setNewSessionCookie(response);
+            return "pages/begin";
+        }
 
         model.addAttribute("session", session);
 
@@ -62,9 +60,15 @@ public class WebController {
         return "pages/evidence";
     }
 
+    private void setNewSessionCookie(HttpServletResponse response) {
+        var session = sessionService.generateSession();
+        Cookie sessionIdCookie = new Cookie("sessionId", session.getId());
+        sessionIdCookie.setPath("/");
+        response.addCookie(sessionIdCookie);
+    }
+
     private boolean sessionIdCookieExists(Cookie[] cookies) {
         for (Cookie cookie : cookies) {
-            System.out.println(cookie.getName());
             if (cookie.getName().equals("sessionId")) {
                 return true;
             }
